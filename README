@@ -1,0 +1,8 @@
+run this to get rid of all of the generated files: 
+
+make clean
+
+run this to make all of the generated files: 
+
+make all
+
