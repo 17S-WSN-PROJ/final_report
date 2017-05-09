@@ -34,7 +34,16 @@
 
 %Only including an abstract since it looks like the submission site wants one... 
 \begin{abstract}
-Killer abstract. 
+In this project we demonstrate a gait monitoring system comprised of Firefly wireless
+sensor motes that relay data from inertial measurement units mounted on a subject's body
+to a central server. Using the acceleration and orientation information reported at six
+different points along a subject's legs and feet, we were able to visualize the subject's
+movements in real time and capture the relevant motion data to be used for future
+analysis. Our system also provides a low-processing solution for fall detection through
+thresholding analysis of the orientation measurements reported by a subset of the sensor
+nodes in the system. After testing our system on three different subjects, we believe it
+represents a proof of concept of low cost gait monitoring systems that will improve the
+quality of patient care in a multitude of settings. 
 \end{abstract}
 
 \section{Introduction}
@@ -81,15 +90,55 @@ residual impact of cumbersome measurement devices.
 %description easier and it still make sense to do that here
 %
 \section{Related Work}
-This project is based on prior work in gait assessment, IMU data interpretation, and
-wireless communication. In this section we will describe how the prior work influenced the
-design of our project 
+This project is based on prior work in gait analysis and wireless sensors networks used to
+aid healthcare objectives. In this section we will describe how the prior work influenced
+the design of our project 
+\subsection{Gait Analysis}
+Gait analysis using wearable sensors is a well-studied approach to characterizing gait
+patters~\cite{gaits}. The goal of the gait analysis approaches is to analyze the various phases of
+the human gait to identify abnormalities. A normal walking gait is comprised of eight
+stages as shown in Figure~\ref{fig:phases}. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\columnwidth]{figs/phases}
+  \caption{{\bf Phases of the stance (a) and swing (b) periods~\cite{gaits} }}
+  \label{fig:phases}
+\end{figure}
+
+Since the first study using wearable sensors in 1973, researchers have captured the data
+from these phases using a variety of transducers. Recently, multiple studies have used
+IMUs attached to a subject’s thigh, calf, and foot to study gait kinematics. Gait
+kinematics investigates the movement of segments of the lower limbs while walking or
+running~\cite{run}. This is distinct from gait kinetics which analyzes the forces exerted on
+different joints while walking. The difficulty with kinetic analysis is the hardware
+required to capture accurate measurements. Previous studies have relied on specialized,
+instrumented footwear that measures the forces acting on a patient’s foot. Gait
+kinematics, on the other hand, has moved towards less intrusive measurement techniques.
+For instance, ~\cite{walkers} used small wireless sensor nodes to report information about the gait
+characteristics of test subjects. Graurock, et. al went one step further in targeting
+patient convenience by building a "plug-and-play" system wherein each sensor node self
+calculated its position on a patient's lower extremeties~\cite{pairing}.  
 
 \section{Technical Description}
-To implement our gait monitoring system we had to handle three major design points-
-transmitting data from the IMUs, analyzing the IMU data, and building a useful interface
-to the information. This section will describe the choices our team made with regards to
-these three subsystems. 
+The system architecture we employ to achieve our goal of measuring a subject's gait using
+wireless sensors is shown in Figure~\ref{overview}. Note that it contains six Firefly
+slave devices each with a Sparkfun Razor 9 DoF Razor IMU M0 board attached. The data are
+then transmitted from the slave nodes to a master node which finally pushes the data to a
+server. To implement our gait monitoring system we had to handle three major design
+points- transmitting data from the IMUs, analyzing the IMU data, and building a useful
+interface to the information. This section will describe the choices our team made with
+regards to these three subsystems. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.75\columnwidth]{figs/sysarch}
+  \caption{{\bf High level system design}}
+  \label{fig:overview}
+\end{figure}
+
+
+
 \subsection{Device Communication}
 Moving data from the IMU to the remote server can be separated into two distinct
 transitions-- one from IMU to firefly slave device and another from the slave to the
@@ -102,7 +151,7 @@ IMU has data available.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.8\columnwidth]{figs/cropped2}
+  \includegraphics[width=0.75\columnwidth]{figs/cropped2}
   \caption{{\bf Firefly node with IMU board attached}}
   \label{fig:ff}
 \end{figure}
@@ -121,7 +170,16 @@ the IMU board, the firefly needs only to issue commands to the IMU, so the proto
 firefly to IMU is far simpler. If the IMU board receives a character from the Firefly, the
 corresponding command is retrieved from a look-up table and carried out. A final feature
 of the IMU-Firefly communication protocol is automatic reboot of the firefly. 
-  Once packets are passed from the IMU to the Firefly slave device, the firefly transmits
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{figs/packet}
+  \caption{{\bf Packet Format from IMU to Firefly}}
+  \label{fig:packet}
+\end{figure}
+
+
+Once packets are passed from the IMU to the Firefly slave device, the firefly transmits
 the packet using the Point Coordination Function (PCF) TDMA protocol~\cite{pcf}. Each
 slave device is statically assigned a time slot according to its preprogrammed MAC address
 and only transmits during its assigned slot. The PCF TDMA protocol is designed for a
@@ -168,6 +226,19 @@ to recalibrate instantaneously which greatly reduces the amount of time the pati
 remain still. 
 
 \subsection{Gait Analysis}
+  Paragraph about step detection 
+
+  Paragraph about stride length based on step detection and assuming the subject's limb
+  measurements are known. 
+
+  Paragraph about calculating knee extension 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{figs/knees}
+  \caption{{\bf Knee extension Calculation}}
+  \label{fig:knees}
+\end{figure}
 
 \subsection{User Interface}
 
