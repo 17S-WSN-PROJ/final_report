@@ -125,7 +125,7 @@ kinematics, on the other hand, has moved towards less intrusive measurement tech
 For instance, ~\cite{walkers} used small wireless sensor nodes to report information about the gait
 characteristics of test subjects. Graurock, et. al went one step further in targeting
 patient convenience by building a "plug-and-play" system wherein each sensor node self
-calculated its position on a patient's lower extremeties~\cite{pairing}.  
+calculated its position on a patient's lower extremities~\cite{pairing}.  
 
 \subsection{IMU Data Processing}
 A large amount of work has been performed in processing the acceleration and orientation
@@ -134,7 +134,7 @@ terms of gait analysis, the work comes from both the robotics and motion capture
 communities. 
 %Can we get a citation from the robotics community here too? 
 For instance, Yost labs has characterized the different joint types of the
-human body in terms of the necessary interpetation of data from IMUs mounted on adjacent
+human body in terms of the necessary interpretation of data from IMUs mounted on adjacent
 limbs~\cite{yost}. The complexity of the analysis ranges from the simple calculation to
 determine the angle of a hinge joint to the vector transformations required to assess the
 pitch, yaw and roll of multi-axis joints. Complementary work from the medical community
@@ -151,7 +151,7 @@ in terms of parameters such as foot clearance and step cadence.
 Our system follows in the spirit of prior work using IMUs to measure gait parameters, and
 work that uses wireless sensors to improve the quality of patient care. The system
 architecture we employ to achieve our goal of measuring a subject's gait using wireless
-sensors is shown in Figure~\ref{overview}. Note that it contains six Firefly slave devices
+sensors is shown in Figure~\ref{fig:overview}. Note that it contains six Firefly slave devices
 each with a Sparkfun Razor 9 DoF Razor IMU M0 board attached. The data are then
 transmitted from the slave nodes to a master node which finally pushes the data to a
 server. To implement our gait monitoring system we had to handle three major design
@@ -186,8 +186,8 @@ IMU has data available.
 \end{figure}
 
   The format of the packet passed from IMU to Firefly is shown in
-Figure ~\ref{fig:packet}. The data are encoded as ASCII characters to simplifiy debugging
-as data move from IMU to firefly slave node to master and final output. While the ASCII
+Figure ~\ref{fig:packet}. The data are encoded as ASCII characters to simplify debugging
+as data move across the multiple platforms in our system. While the ASCII
 encoding greatly simplified debugging, it does mean that the packet size may change given
 different accelerometer values.  Throughout the project, several unsuccessful attempts
 were made to tightly control the data transmission by the IMU board, but the nature of the
@@ -215,7 +215,7 @@ and only transmits during its assigned slot. The PCF TDMA protocol is designed f
 network with a star topology, where all slave nodes are within one hop of the master
 device because all slave nodes must synchronize based on a message sent from the master at
 the beginning of every TDMA cycle.  Despite its simplicity, this protocol met our design
-goals of maximizing data throughput by preventing collisions without inucurring the time
+goals of maximizing data throughput by preventing collisions without incurring the time
 overhead of carrier sense~\cite{CSMA}.  During its designated time slot, a slave node
 transmits the packet passed to it from the IMU after stripping off the start and stop
 bytes. An added advantage of the TDMA protocol is the implicit ID and time information
@@ -224,7 +224,7 @@ the master node can automatically attach the ID of the node that transmitted the
 before passing the entire packet to the server for processing. Further, the time
 synchronization as a result of TDMA allows for the assumption that the measurements from
 different IMUs received during a given TDMA cycle occurred at the same time. Therefore,
-the server can afix a timestamp to data based on when it receives the data rather than
+the server can affix a timestamp to data based on when it receives the data rather than
 transmitting a timestamp from the slave node indicating the precise moment when the IMU
 measurement was made. 
 
@@ -234,19 +234,19 @@ tightly matching the TDMA slot length to the transmission time of a packet. In t
 configuration, the slot length is fixed at 10ms per node. Further exploration of the
 transmit and receive task lengths on the slave nodes could also improve throughput.
 Currently both the receive and transmit tasks operate on a period of 250ms. In the
-transmit task, a slave device transmits as many times as possible given the tdma protocol
+transmit task, a slave device transmits as many times as possible given the TDMA protocol
 before switching to the receive task, but during the receive task the node will receive a
 message with low probability because the master sends commands to the slaves infrequently.
-Reducing the length of the receive period will thererfore reduce the slave node's idle
+Reducing the length of the receive period will therefore reduce the slave node's idle
 time with little impact on the system's performance. 
 
-  The only command transmitted from the master to the slaves beyond the TDMA synchronization
+The only command transmitted from the master to the slaves beyond the TDMA synchronization
 is a "Recalibrate" command that signals the slave nodes to send messages to their IMUs to
 perform static calibration. This command is sent only when a users pushes the auxiliary
 button the master firefly at the beginning of a long period of system operation. While the
 communication protocol is complicated by this single command, it is important that the
 master node be able to issue a synchronous recalibration command to all of the nodes to
-improve the accuracy of the following measurements. The recalibraton phase samples the
+improve the accuracy of the following measurements. The recalibration phase samples the
 baseline static noise floor of each IMU, so the subject wearing the devices must be
 stationary while the devices are undergoing recalibration. It is difficult for the subject
 to remain stationary if each of the devices must be manually turned off and then on to initiate
@@ -258,39 +258,58 @@ remain still.
 Our work analyzing subject's gait parameters focused on stride length, swing time, and
 knee extension. Each of these parameters required different analysis techniques that will
 be described below.\\ 
-{\bf Stride Length} To determine the stride length, we first assume that the lengths of each
-segment of a subject's limbs are known. \utodo{Alex}{Describe how stride length was
-calculated}
-\\
+{\bf Stride Length} To determine the stride length, we first assume that the lengths of
+each segment of a subject's limbs are known. Then we use the attached IMUs to measure
+their orientations. After getting the length and direction of each limb, we can simulate
+the gait motion using a model of linked limbs with a fixed rotation axis of the hip. To do
+that, we can first calculate the 3D position of the knee using the measurement of the
+thigh, and then calculate the 3D position of ankle using the measurement of the calf and
+the estimated knee position. Furthermore, if we can detect the step, we can calculate the
+stride length equals the longitudinal distance between two ankle points.\\
 {\bf Swing Time} Our analysis focuses on detecting the subject's step to in turn ascertain
 when a subject's foot is on the ground, and when it is in motion. By making the assumption
 that the acceleration of the foot is close to zero when it is on the ground, we were able
 to detect the beginning and end of a subject's stride based strictly on acceleration data
-from the x-y plane. Our implementation is a simplified version of the technique used
-in~\cite{fancy}. Figure~\ref{fig:step-detect} shows the basic shape of accelerometer data
-gathered from a subject's feet as he or she walks and the marked regions indicate the time
-during which his/her foot is either on the ground or in the air. \\
+from the x-y plane. Figure~\ref{fig:foot} shows the orientations of the x,y,z planes
+relative to a human foot in our calculation. Our implementation is a simplified version of
+the technique used in~\cite{fancy}. Figure~\ref{fig:step-detect} shows the basic shape of
+accelerometer data gathered from a subject's feet as he or she walks and the marked
+regions indicate the time during which his/her foot is either on the ground or in the air.
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\columnwidth]{figs/swing}
-  \caption{{\bf Step detection from accelerometer data}}
-  \label{fig:step-detect}
+  \subfigure[]{
+    \centering
+    \includegraphics[width=.95\columnwidth]{figs/swing}
+    \label{fig:step-detect}
+  }
+  \subfigure[]{
+    \centering
+    \includegraphics[width=.7\columnwidth]{figs/one_foot}
+    \label{fig:foot}
+  }
+  \label{fig:swing}
+  \caption{{\bf Step detection graph and IMU references}}
 \end{figure}
+
 {\bf Knee Extension} A subject's knee extension was calculated using the hinge joint
-techniques explained by Yost~\cite{yost}. The equations are \utodo{Iljoo}{Add the
-equations you actually used for knee extension} Figure~\ref{fig:knees} shows the angles
-that are reported by the final calculation. 
+techniques explained by Yost~\cite{yost}. The equations used to calculate the knee
+extension are shown on the right of Figure~\ref{fig:knees}. The picture on the left shows
+the angles that are reported by the final calculation and the orientations reported by
+each of the IMUs used in the calculation. Each quaternion from the IMUs is converted to a
+local coordinate using rotation matrix respectively. The angle is calculated by dot
+product of two quaternions projected to the x-axis in the IMU’s the local coordinate
+system.
+
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\columnwidth]{figs/knees}
+  \includegraphics[width=0.99\columnwidth]{figs/knees2}
   \caption{{\bf Knee extension Calculation}}
   \label{fig:knees}
 \end{figure}
 
 \subsection{User Interface}
-\utodo{Alex}{Add all the details about the user interface that I missed!!}
-The user interface is aimed at a technical professional rather than a healthcare provider,
+The user interface is aimed at a technical professional rather that a healthcare provider,
 but it is built so that certain features are easy to access for non-technical personnel
 and data storage for future processing is streamlined. Our design uses the popular Robot
 Operating System (ROS) platform to control data flow into the system software from the
@@ -298,16 +317,16 @@ single stream of data coming from the master node. The control buttons for data 
 individual nodes are simple to access and can be used to change the system's
 configuration. The interface also contains a slave node health status indicator that
 reports whether or not the master node has successfully received data from a given slave
-within a recent timeframe. Figure~\ref{fig:ROS} shows the configuration interface and the
+within a recent time-frame. Figure~\ref{fig:ROS} shows the configuration interface and the
 health status indicator. In a healthcare environment, these tools would be used by
-technical personnell to configure the system software before it is used by a healthcare
+technical personnel to configure the system software before it is used by a healthcare
 provider. 
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\columnwidth]{figs/gui}
   \caption{{\bf ROS user interface}}
-  \label{fig:gui}
+  \label{fig:ROS}
 \end{figure}
 The user interface also provides a convenient video playback feature than can replay all
 of the data visualizations produced in real time during active data capture as well as an
@@ -324,7 +343,9 @@ batteries without time consuming disassembly. Further, the design allows a strap
 pass through the upper and lower pieces of the enclosure so that the devices can be
 comfortably affixed to subjects using velcro straps. During testing, we found that the
 straps held the slave devices securely in place and they did not restrict the subject's
-movements. 
+movements. Figure~\ref{fig:attached} shows the devices attached to a subject;
+Figure~\ref{fig:on_shoe} provides a close up of how the device connects to the patient's
+shoe.  
 %Except for that part where the ones on the thighs acted like tourniquets... but we won't
 %talk about that... 
 \begin{figure}[h]
@@ -332,15 +353,31 @@ movements.
   \subfigure[]{
     \centering
     \includegraphics[width=.45\columnwidth]{figs/box}
-    \label{fig:box2}
   }
   \subfigure[]{
     \centering
     \includegraphics[width=.45\columnwidth]{figs/wLid}
-    \label{fig:wLid}
   }
+  \caption{{\bf Enclosure for sensor nodes}
   \label{fig:box}
-  \caption{{\bf Enclosure for sensor nodes}}
+  }
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \subfigure[]{
+    \centering
+    \includegraphics[width=.45\columnwidth]{figs/on_leg}
+    \label{fig:on_body}
+  }
+  \subfigure[]{
+    \centering
+    \includegraphics[width=.45\columnwidth]{figs/on_foot}
+    \label{fig:on_shoe}
+  }
+  \caption{{\bf Sensors attached to subject}
+  \label{fig:attached}
+  }
 \end{figure}
 
 \section{Results}
@@ -361,11 +398,11 @@ work would filter out sudden changes to prevent this phenomena.
   \centering
   \includegraphics[width=0.95\columnwidth]{figs/vis}
   \caption{{\bf Final visualization layout}}
-  \label{fig:vis }
+  \label{fig:vis}
 \end{figure}
 
 \subsection{Gait parameter graphs}
-In adition to visualizing a subject's movements, our system can generate graphs of a
+In addition to visualizing a subject's movements, our system can generate graphs of a
 subject's knee extension and stride length in real time. Figure~\ref{fig:extend} shows the
 graph of knee extension on the right as our subject bends his knee. The graph contains
 separate extension angles for the left and right knee, so it is simple to notice if the
@@ -375,7 +412,7 @@ range of motion in one knee is more restricted than the other.
   \centering
   \includegraphics[width=0.95\columnwidth]{figs/extend}
   \caption{{\bf Real time knee extension reporting}}
-  \label{fig:extend }
+  \label{fig:extend}
 \end{figure}
 
 The stride length graph appears in nearly real time, but requires additional processing
@@ -400,7 +437,7 @@ the subject is walking, the measurement is stable and indicates that the node is
 perpendicular to the ground plane. If a subject falls, the orientation data indicates a
 rapid change in the angle between the node's central axis and the ground as demonstrated
 in Figure~\ref{fig:falling}. Though our system relies primarily on the obvious change in
-the grph that a system operator can visually observe, an automatic mechanism based on a
+the graph that a system operator can visually observe, an automatic mechanism based on a
 set threshold for the angle between the nodes and the ground would suffice to warn
 caregivers that a patient has fallen. 
 
@@ -460,7 +497,15 @@ The table below reports the segments of the project each team member completed.\
   \hline
 \end{tabular}
 
-\balance
+\section*{Acknowledgements}
+We thank the Arjit Arora, Robotics Engineer, 4moms for assistance with design and
+fabrication of enclosures for sensor nodes. We would also like to show our gratitude to
+the Dr. Seungmoon Song and Dr. Hanbyul Joo, Robotics Institute, Carnegie Mellon University
+for sharing their pearls of wisdom with us during the course of this project. We are also
+immensely grateful to Prof. Rajkumar, Shunsuke Aoki, and Sandeep Dsouza for their
+support.
+
+%\balance
 \bibliographystyle{abbrv}
 \bibliography{sigproc}  % sigproc.bib is the name of the Bibliography in this case
 \end{document}
