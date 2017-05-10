@@ -305,7 +305,7 @@ provider.
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.8\columnwidth]{figs/gui}
+  \includegraphics[width=\columnwidth]{figs/gui}
   \caption{{\bf ROS user interface}}
   \label{fig:gui}
 \end{figure}
@@ -411,9 +411,54 @@ caregivers that a patient has fallen.
   \label{fig:falling}
 \end{figure}
 
+\section{Conclusion}
+\sys is a proof-of-concept implementation of gait monitoring using low cost IMUs and
+a small number of wireless sensors. We were able to measure relevant parameters of our
+subject's gaits and visualize the data in an accessible fashion despite the relatively low
+data transfer rate in our network. \sys represents an example of a low cost monitoring
+solution for patients with fall risks, and it could provide additional data for healthcare
+providers seeking to customize a plan of care to a patient's behavior outside of the
+office. We worked through several major challenges including timing mismatch between the
+IMU and the Firefly, packet loss in the network, IMU drift, and signal processing
+subtleties.
+\section{Milestones and Task Division}
+We achieved most of the milestones that we set out to accomplish in our original project
+proposal, though some of the deadlines for the different milestones shifted.
+Figure~\ref{fig:table} is a timeline of our original deliverable schedule and an explanation
+of when each deliverable was finished or how it changed. 
 
-\section{Conclusion} 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\columnwidth]{figs/table}
+  \caption{{\bf Timeline of deliverables }}
+  \label{fig:table}
+\end{figure}
 
+The table below reports the segments of the project each team member completed.\\
+\begin{tabular}{|p{.95\columnwidth}|}
+  \hline
+{\bf Alex:}
+\begin{itemize}
+  \item {IMU calibration feasibility assessment}
+  \item ROS system development and management
+  \item Motion capture and visualization
+\end{itemize}\tabularnewline
+\hline
+{\bf Emily:}
+\begin{itemize}
+  \item{Data transfer from IMU to Firefly}
+  \item{Inter-Firefly communication management}
+  \item{Final report organization} 
+\end{itemize}\tabularnewline
+\hline
+{\bf Iljoo:}
+\begin{itemize}
+  \item{Knee extension calculation} 
+  \item{Step detection research and implementation}
+  \item{Enclosure fabrication} 
+\end{itemize}\tabularnewline
+  \hline
+\end{tabular}
 
 \balance
 \bibliographystyle{abbrv}
