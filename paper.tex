@@ -1,3 +1,9 @@
+
+
+\newcount\draft\draft=1 % set to 0 for submission or publication
+\newcount\cameraready\cameraready=1
+
+
 \documentclass[conference]{IEEEtran}
 
 \usepackage{graphicx}
@@ -7,12 +13,14 @@
 \usepackage{balance}
 \usepackage{comment}
 \usepackage{xspace}
+\usepackage{xxx}
 \usepackage[export]{adjustbox}
 \usepackage{wrapfig}
 \usepackage{multicol}
 \usepackage{float}
 \usepackage{subfigure}
 \newcommand{\sys}{Safewalk\xspace}
+\newcommand{\utodo}[2]{ {\textcolor{red} {#1}}: {\textcolor{red} {#2}}}
 \author{
   \IEEEauthorblockN{
    Iljoo Baek, Mengwen He and Emily Ruppel
@@ -174,7 +182,7 @@ IMU has data available.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=0.75\columnwidth]{figs/cropped2}
+  \includegraphics[width=0.6\columnwidth]{figs/cropped2}
   \caption{{\bf Firefly node with IMU board attached}}
   \label{fig:ff}
 \end{figure}
@@ -253,8 +261,9 @@ Our work analyzing subject's gait parameters focused on stride length, swing tim
 knee extension. Each of these parameters required different analysis techniques that will
 be described below.\\ 
 {\bf Stride Length} To determine the stride length, we first assume that the lengths of each
-segment of a subject's limbs are known. Then...\\
-%Need to know how this works!!
+segment of a subject's limbs are known. \utodo{Alex}{Describe how stride length was
+calculated}
+\\
 {\bf Swing Time} Our analysis focuses on detecting the subject's step to in turn ascertain
 when a subject's foot is on the ground, and when it is in motion. By making the assumption
 that the acceleration of the foot is close to zero when it is on the ground, we were able
@@ -262,17 +271,17 @@ to detect the beginning and end of a subject's stride based strictly on accelera
 from the x-y plane. Our implementation is a simplified version of the technique used
 in~\cite{fancy}. Figure~\ref{fig:step-detect} shows the basic shape of accelerometer data
 gathered from a subject's feet as he or she walks and the marked regions indicate the time
-during which his/her foot is either on the ground or in the air. 
+during which his/her foot is either on the ground or in the air. \\
 \begin{figure}[h]
   \centering
   \includegraphics[width=0.8\columnwidth]{figs/swing}
   \caption{{\bf Step detection from accelerometer data}}
   \label{fig:step-detect}
 \end{figure}
-\\
 {\bf Knee Extension} A subject's knee extension was calculated using the hinge joint
-techniques explained by Yost~\cite{yost}. The equations are: 
-%Insert equations here!!
+techniques explained by Yost~\cite{yost}. The equations are \utodo{Iljoo}{Add the
+equations you actually used for knee extension} Figure~\ref{fig:knees} shows the angles
+that are reported by the final calculation. 
 
 \begin{figure}[h]
   \centering
@@ -282,6 +291,31 @@ techniques explained by Yost~\cite{yost}. The equations are:
 \end{figure}
 
 \subsection{User Interface}
+\utodo{Alex}{Add all the details about the user interface that I missed!!}
+The user interface is aimed at a technical professional rather than a healthcare provider,
+but it is built so that certain features are easy to access for non-technical personnel
+and data storage for future processing is streamlined. Our design uses the popular Robot
+Operating System (ROS) platform to control data flow into the system software from the
+single stream of data coming from the master node. The control buttons for data from the
+individual nodes are simple to access and can be used to change the system's
+configuration. The interface also contains a slave node health status indicator that
+reports whether or not the master node has successfully received data from a given slave
+within a recent timeframe. Figure~\ref{fig:ROS} shows the configuration interface and the
+health status indicator. In a healthcare environment, these tools would be used by
+technical personnell to configure the system software before it is used by a healthcare
+provider. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{figs/gui}
+  \caption{{\bf ROS user interface}}
+  \label{fig:gui}
+\end{figure}
+The user interface also provides a convenient video playback feature than can replay all
+of the data visualizations produced in real time during active data capture as well as an
+accompanying video of the subject. Finally, the data are logged automatically for future
+use or offline analyses. 
+
 
 \subsection{Enclosure} 
 To ensure that the IMU remains in a fixed position on the body, and to protect the
@@ -312,8 +346,7 @@ movements.
 \end{figure}
 
 \section{Results}
-
-Talk about all of the calculations and provide examples from data we have lying around. 
+\
 
 \section{Conclusion} 
 
