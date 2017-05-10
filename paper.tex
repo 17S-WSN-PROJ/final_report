@@ -11,6 +11,7 @@
 \usepackage{wrapfig}
 \usepackage{multicol}
 \usepackage{float}
+\usepackage{subfigure}
 \newcommand{\sys}{Safewalk\xspace}
 \author{
   \IEEEauthorblockN{
@@ -120,11 +121,33 @@ characteristics of test subjects. Graurock, et. al went one step further in targ
 patient convenience by building a "plug-and-play" system wherein each sensor node self
 calculated its position on a patient's lower extremeties~\cite{pairing}.  
 
+\subsection{IMU Data Processing}
+A large amount of work has been performed in processing the acceleration and orientation
+values reported by inertial measurement sensors to make use of the data. Specifically in
+terms of gait analysis, the work comes from both the robotics and motion capture
+communities. 
+%Can we get a citation from the robotics community here too? 
+For instance, Yost labs has characterized the different joint types of the
+human body in terms of the necessary interpetation of data from IMUs mounted on adjacent
+limbs~\cite{yost}. The complexity of the analysis ranges from the simple calculation to
+determine the angle of a hinge joint to the vector transformations required to assess the
+pitch, yaw and roll of multi-axis joints. Complementary work from the medical community
+puts the raw measurements in context for clinicians by providing a point of comparison.
+For instance, in ~\cite{pop} inertial sensor data was collected from a large population
+of adults and translated into a database of typical gait parameter values that researchers
+and healthcare professionals can use as a point of comparison. The study combines a
+multitude of well characterized algorithms for assessing gait parameters using only two
+IMUs, one on each of the subject's feet, and is able to build a model for normal gaits
+in terms of parameters such as foot clearance and step cadence. 
+
+
 \section{Technical Description}
-The system architecture we employ to achieve our goal of measuring a subject's gait using
-wireless sensors is shown in Figure~\ref{overview}. Note that it contains six Firefly
-slave devices each with a Sparkfun Razor 9 DoF Razor IMU M0 board attached. The data are
-then transmitted from the slave nodes to a master node which finally pushes the data to a
+Our system follows in the spirit of prior work using IMUs to measure gait parameters, and
+work that uses wireless sensors to improve the quality of patient care. The system
+architecture we employ to achieve our goal of measuring a subject's gait using wireless
+sensors is shown in Figure~\ref{overview}. Note that it contains six Firefly slave devices
+each with a Sparkfun Razor 9 DoF Razor IMU M0 board attached. The data are then
+transmitted from the slave nodes to a master node which finally pushes the data to a
 server. To implement our gait monitoring system we had to handle three major design
 points- transmitting data from the IMUs, analyzing the IMU data, and building a useful
 interface to the information. This section will describe the choices our team made with
@@ -226,12 +249,30 @@ to recalibrate instantaneously which greatly reduces the amount of time the pati
 remain still. 
 
 \subsection{Gait Analysis}
-  Paragraph about step detection 
-
-  Paragraph about stride length based on step detection and assuming the subject's limb
-  measurements are known. 
-
-  Paragraph about calculating knee extension 
+Our work analyzing subject's gait parameters focused on stride length, swing time, and
+knee extension. Each of these parameters required different analysis techniques that will
+be described below.\\ 
+{\bf Stride Length} To determine the stride length, we first assume that the lengths of each
+segment of a subject's limbs are known. Then...\\
+%Need to know how this works!!
+{\bf Swing Time} Our analysis focuses on detecting the subject's step to in turn ascertain
+when a subject's foot is on the ground, and when it is in motion. By making the assumption
+that the acceleration of the foot is close to zero when it is on the ground, we were able
+to detect the beginning and end of a subject's stride based strictly on acceleration data
+from the x-y plane. Our implementation is a simplified version of the technique used
+in~\cite{fancy}. Figure~\ref{fig:step-detect} shows the basic shape of accelerometer data
+gathered from a subject's feet as he or she walks and the marked regions indicate the time
+during which his/her foot is either on the ground or in the air. 
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\columnwidth]{figs/swing}
+  \caption{{\bf Step detection from accelerometer data}}
+  \label{fig:step-detect}
+\end{figure}
+\\
+{\bf Knee Extension} A subject's knee extension was calculated using the hinge joint
+techniques explained by Yost~\cite{yost}. The equations are: 
+%Insert equations here!!
 
 \begin{figure}[h]
   \centering
@@ -242,9 +283,35 @@ remain still.
 
 \subsection{User Interface}
 
+\subsection{Enclosure} 
+To ensure that the IMU remains in a fixed position on the body, and to protect the
+connection between the Firefly and the IMU, we designed a 3D printed enclosure for the
+slave nodes. Figure~\ref{fig:box} shows the enclosure with and without the specially designed
+lid. The enclosure allows for easy access to all programming ports, power switches and
+batteries without time consuming disassembly. Further, the design allows a strap to easily
+pass through the upper and lower pieces of the enclosure so that the devices can be
+comfortably affixed to subjects using velcro straps. During testing, we found that the
+straps held the slave devices securely in place and they did not restrict the subject's
+movements. 
+%Except for that part where the ones on the thighs acted like tourniquets... but we won't
+%talk about that... 
+\begin{figure}[h]
+  \centering
+  \subfigure[]{
+    \centering
+    \includegraphics[width=.45\columnwidth]{figs/box}
+    \label{fig:box2}
+  }
+  \subfigure[]{
+    \centering
+    \includegraphics[width=.45\columnwidth]{figs/wLid}
+    \label{fig:wLid}
+  }
+  \label{fig:box}
+  \caption{{\bf Enclosure for sensor nodes}}
+\end{figure}
+
 \section{Results}
-Add picture of final enclosure. Discuss how it was attached to the subject. Mention that
-it was fairly stable.
 
 Talk about all of the calculations and provide examples from data we have lying around. 
 
