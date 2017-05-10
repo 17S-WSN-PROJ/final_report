@@ -346,7 +346,73 @@ movements.
 \end{figure}
 
 \section{Results}
-\
+Our results are best demonstrated through a series of the screenshots acquired during
+multiple demos. They capture the objective of our project and demonstrate the value of the
+current prototype as well as the points where improvements could be made. 
+\subsection{Visualization}
+Our final data visualization included a simple avatar and representations of the
+orientation of all six slave nodes. Figure~\ref{fig:vis} shows the final visualization layout.
+Both elements of the visualization moved in real time as data passed in from the master.
+For the orientations, each node's axes move independent of the other nodes, so the
+movements provide the user with a sense of the raw noise included in the orientation
+measurements. If any of the node's IMUs reports some kind of spurious, outlying data
+point, the user will observe a sudden change in that IMU's axis representation. Future
+work would filter out sudden changes to prevent this phenomena. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\columnwidth]{figs/vis}
+  \caption{{\bf Final visualization layout}}
+  \label{fig:vis }
+\end{figure}
+
+\subsection{Gait parameter graphs}
+In adition to visualizing a subject's movements, our system can generate graphs of a
+subject's knee extension and stride length in real time. Figure~\ref{fig:extend} shows the
+graph of knee extension on the right as our subject bends his knee. The graph contains
+separate extension angles for the left and right knee, so it is simple to notice if the
+range of motion in one knee is more restricted than the other. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\columnwidth]{figs/extend}
+  \caption{{\bf Real time knee extension reporting}}
+  \label{fig:extend }
+\end{figure}
+
+The stride length graph appears in nearly real time, but requires additional processing
+of the segments of multiple data points to find where steps occur, thus delaying it
+slightly behind real time. However, it still provides useful, prompt feedback on the
+length of a subject's stride as shown in Figure~\ref{fig:length}. The graph shows the
+distance between the right and left foot, so the rise and fall pattern observed in the
+graph in this figure indicates the feet separating as a subject's leg moves forward and coming
+back together as the subject swings one foot past the other on the next step. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\columnwidth]{figs/length}
+  \caption{{\bf Stride length reporting}}
+  \label{fig:length}
+\end{figure}
+
+\subsection{Fall Detection}
+In testing our gait monitoring system, we found that the orientation reported by the nodes
+strapped to a patient's thighs provided a reliable fall indicator for our subject. When
+the subject is walking, the measurement is stable and indicates that the node is
+perpendicular to the ground plane. If a subject falls, the orientation data indicates a
+rapid change in the angle between the node's central axis and the ground as demonstrated
+in Figure~\ref{fig:falling}. Though our system relies primarily on the obvious change in
+the grph that a system operator can visually observe, an automatic mechanism based on a
+set threshold for the angle between the nodes and the ground would suffice to warn
+caregivers that a patient has fallen. 
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=.99\columnwidth]{figs/falling}
+  \caption{{\bf Angle reporting for fall detection }}
+  \label{fig:falling}
+\end{figure}
+
 
 \section{Conclusion} 
 
