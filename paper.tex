@@ -40,10 +40,12 @@
 \begin{document}
 
 \maketitle
+\thispagestyle{plain}
+\pagestyle{plain}
 
 %Only including an abstract since it looks like the submission site wants one... 
 \begin{abstract}
-In this project we demonstrate a gait monitoring system comprised of Firefly wireless
+In this project we demonstrate \sys, a gait monitoring system comprised of Firefly wireless
 sensor motes that relay data from inertial measurement units mounted on a subject's body
 to a central server. Using the acceleration and orientation information reported at six
 different points along a subject's legs and feet, we were able to visualize the subject's
@@ -68,7 +70,7 @@ predicting an increased fall risk from gait patterns requires the attention of a
 medical professional, which limits the settings in which gait analysis can be used.
     
 Wireless Body Area Networks have been proposed as a promising solution for capturing
-useful health status indicators without inconveniencing a patient~\cite{wban}. The
+useful health status indicators without inconveniencing a patient~\cite{msban,wban}. The
 additional data enables a new field of computer-assisted physical therapy that allows
 therapists to deliver more targeted care to their patients. Advanced treatment centers for
 patients with unique cases, such as the Walter Reed Center for Performance and Clinical
@@ -80,7 +82,7 @@ body and six force plates in the floor to fully capture a patient's movement. Th
 movement data can be captured and used at a later time, the gait analysis is still limited
 to a clinical setting. 
   
-Our project's goal was to expand the usefulness of gait analysis beyond a professional’s
+\sys's goal was to expand the usefulness of gait analysis beyond a professional’s
 office to an individual’s day-to-day environment. We accomplished our goal by
 demonstrating a proof-of-concept gait monitoring system that relies on wireless motes
 instrumented with Inertial Measurement Units (IMUs) to capture relevant data and relay
@@ -94,10 +96,6 @@ prototype system we note that wireless sensor networks are particularly promisin
 accomplishing gait detection because the small nodes and lack of constraining wires
 minimizes the impact on the patient and allows for an honest gait assessment without the
 residual impact of cumbersome measurement devices. 
-%
-%Add note about final system architecture in Intro... should make the technical
-%description easier and it still make sense to do that here
-%
 \section{Related Work}
 This project is based on prior work in gait analysis and wireless sensors networks used to
 aid healthcare objectives. In this section we will describe how the prior work influenced
